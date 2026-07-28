@@ -4,19 +4,19 @@
 
 const CACHE_NAME = 'baby-dashboard-v1';
 const CACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/css/style.css',
-  '/js/app.js',
-  '/js/sensory-data.js',
-  '/icons/favicon-32x32.png',
-  '/icons/apple-touch-icon.png',
-  '/icons/icon-192x192.png',
-  '/icons/icon-256x256.png',
-  '/icons/icon-384x384.png',
-  '/icons/icon-512x512.png',
-  '/icons/maskable-512x512.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './css/style.css',
+  './js/app.js',
+  './js/sensory-data.js',
+  './icons/favicon-32x32.png',
+  './icons/apple-touch-icon.png',
+  './icons/icon-192x192.png',
+  './icons/icon-256x256.png',
+  './icons/icon-384x384.png',
+  './icons/icon-512x512.png',
+  './icons/maskable-512x512.png'
 ];
 
 // 安装时缓存核心资源
@@ -62,7 +62,7 @@ self.addEventListener('fetch', event => {
           if (cached) return cached;
           // 如果是页面请求，回退到 index.html（SPA 行为）
           if (request.mode === 'navigate') {
-            return caches.match('/index.html');
+            return caches.match('./index.html');
           }
           throw new Error('No cache match for ' + request.url);
         });

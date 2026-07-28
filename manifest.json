@@ -2,7 +2,8 @@
   "name": "奶咖育儿工作台",
   "short_name": "奶咖育儿",
   "description": "2岁3个月男宝专属电子育儿工作台：喂养、早教、感统训练、每周复盘",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FAF8F5",
@@ -61,21 +62,21 @@
       "name": "感统训练",
       "short_name": "感统",
       "description": "打开今日感统训练清单",
-      "url": "/index.html?tab=sensory",
+      "url": "./index.html?tab=sensory",
       "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "喂养打卡",
       "short_name": "喂养",
       "description": "记录今日三餐两点",
-      "url": "/index.html?tab=feeding",
+      "url": "./index.html?tab=feeding",
       "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "早教游戏",
       "short_name": "早教",
       "description": "查看今日早教推荐",
-      "url": "/index.html?tab=edu",
+      "url": "./index.html?tab=edu",
       "icons": [{ "src": "icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ],
