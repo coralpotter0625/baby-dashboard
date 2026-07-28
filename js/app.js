@@ -813,14 +813,17 @@ function setupInstallPrompt() {
     || (window.harmony !== undefined)
     || /huawei/.test(navigator.vendor?.toLowerCase() || '');
   
+  // 所有未安装用户都显示固定安装入口
+  showInstallEntry();
+
   // 如果 3 秒后还没触发 beforeinstallprompt，说明浏览器不支持自动弹窗
   setTimeout(() => {
     if (!deferredPrompt) {
-      showInstallEntry();
       // 华为浏览器特殊引导
       if (isHuawei) {
         showHuaweiInstallGuide();
       }
+      // 其他浏览器如果想自动弹底部横幅，也可以在这里显示，但目前用固定入口就够了
     }
   }, 3000);
 }
