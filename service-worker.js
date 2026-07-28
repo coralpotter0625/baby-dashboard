@@ -1,8 +1,8 @@
 // ============================================================
-//  Service Worker —— 奶咖育儿工作台 PWA 离线缓存
+//  Service Worker —— 猪猪育儿工作台 PWA 离线缓存
 // ============================================================
 
-const CACHE_NAME = 'baby-dashboard-v1';
+const CACHE_NAME = 'baby-dashboard-v2';
 const CACHE_ASSETS = [
   './',
   './index.html',
