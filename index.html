@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#FAF8F5">
+  <meta name="description" content="2岁3个月男宝专属电子育儿工作台：喂养、早教、感统训练、每周复盘">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="奶咖育儿">
+  <title>奶咖育儿工作台 · 2岁3月专属</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ==================== 顶部栏 ==================== -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-logo">🧒 奶咖<span>育儿</span>工作台</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="topbar-week" id="topbarWeek">第1周</span>
+        <span class="topbar-date" id="topbarDate"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== Tab 导航 ==================== -->
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-item active" data-tab="dashboard">
+      <span class="tab-emoji">🏠</span>仪表盘
+    </button>
+    <button class="tab-item" data-tab="feeding">
+      <span class="tab-emoji">🍽️</span>喂养
+    </button>
+    <button class="tab-item" data-tab="edu">
+      <span class="tab-emoji">📚</span>早教
+    </button>
+    <button class="tab-item" data-tab="sensory">
+      <span class="tab-emoji">🏃</span>感统
+    </button>
+    <button class="tab-item" data-tab="review">
+      <span class="tab-emoji">📋</span>复盘
+    </button>
+  </nav>
+
+  <!-- ==================== 主内容区 ==================== -->
+  <div class="content">
+
+    <!-- ==================== 页面1：首页仪表盘 ==================== -->
+    <div class="page active" id="page-dashboard">
+      <!-- 安全置顶 -->
+      <div class="safety-banner">
+        <div class="safety-icon">⚠️</div>
+        <div class="safety-text">
+          <strong>安全红线</strong><br>
+          ① 饭后1小时内禁止颠簸/旋转训练<br>
+          ② 前庭敏感宝宝减量50%，幅度从极小开始<br>
+          ③ 宝宝哭闹/抗拒即停，不强迫
+        </div>
+      </div>
+
+      <!-- 今日必做清单 -->
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">✅</span>今日必做清单
+          <span class="badge" id="todoCount">0/0</span>
+        </div>
+        <ul class="todo-list" id="todoList"></ul>
+      </div>
+
+      <!-- 本周训练进度 -->
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">📊</span>本周训练进度
+          <span class="badge" id="weekProgressBadge">第1周</span>
+        </div>
+        <div class="progress-label">
+          <span>已完成训练项</span>
+          <span id="weekProgressText">0 / 20</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="weekProgressBar" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- 宝宝数据卡片 -->
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">👶</span>宝宝今日数据
+        </div>
+        <div class="data-grid">
+          <div class="data-cell">
+            <div class="data-icon">🛏️</div>
+            <div class="data-label">起床时间</div>
+            <input class="data-value input-val" type="time" id="babyWakeTime" placeholder="--:--">
+          </div>
+          <div class="data-cell">
+            <div class="data-icon">😴</div>
+            <div class="data-label">午睡时间</div>
+            <input class="data-value input-val" type="time" id="babyNapTime" placeholder="--:--">
+          </div>
+          <div class="data-cell">
+            <div class="data-icon">😊</div>
+            <div class="data-label">情绪状态</div>
+            <select class="data-value input-val" id="babyMood" style="cursor:pointer;">
+              <option value="">选择</option>
+              <option value="😊 愉快">😊 愉快</option>
+              <option value="😐 平稳">😐 平稳</option>
+              <option value="😟 烦躁">😟 烦躁</option>
+              <option value="😢 哭闹">😢 哭闹</option>
+            </select>
+          </div>
+          <div class="data-cell">
+            <div class="data-icon">🎯</div>
+            <div class="data-label">专注力</div>
+            <select class="data-value input-val" id="babyFocus" style="cursor:pointer;">
+              <option value="">选择</option>
+              <option value="⭐⭐⭐ 良好">⭐⭐⭐ 良好</option>
+              <option value="⭐⭐ 一般">⭐⭐ 一般</option>
+              <option value="⭐ 较弱">⭐ 较弱</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快捷入口 -->
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">⚡</span>快捷入口
+        </div>
+        <div class="quick-grid">
+          <div class="quick-btn feeding" data-tab="feeding">
+            <span class="qb-icon">🍽️</span>
+            <span class="qb-label">喂养</span>
+          </div>
+          <div class="quick-btn edu" data-tab="edu">
+            <span class="qb-icon">📚</span>
+            <span class="qb-label">早教</span>
+          </div>
+          <div class="quick-btn sensory" data-tab="sensory">
+            <span class="qb-icon">🏃</span>
+            <span class="qb-label">感统</span>
+          </div>
+          <div class="quick-btn review" data-tab="review">
+            <span class="qb-icon">📋</span>
+            <span class="qb-label">复盘</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 页面2：喂养系统 ==================== -->
+    <div class="page" id="page-feeding">
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">🍽️</span>今日喂养打卡
+          <span class="badge" id="feedingDate"></span>
+        </div>
+
+        <div class="meal-section">
+          <div class="meal-header">
+            <span class="meal-name">🍳 早餐</span>
+            <span class="meal-time">07:00-08:00</span>
+          </div>
+          <div class="meal-inputs">
+            <div class="meal-input-group">
+              <label>主食品种</label>
+              <input type="text" id="breakfastMain" placeholder="如：鸡蛋粥+面包">
+            </div>
+            <div class="meal-input-group">
+              <label>进食状态</label>
+              <select id="breakfastState">
+                <option value="">选择</option>
+                <option value="全部吃完">全部吃完</option>
+                <option value="吃了一半">吃了一半</option>
+                <option value="挑食少吃">挑食少吃</option>
+                <option value="拒绝不吃">拒绝不吃</option>
+              </select>
+            </div>
+          </div>
+          <label class="meal-done" id="breakfastDone">
+            <span class="mini-check"></span><span>已完成打卡</span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="meal-section">
+          <div class="meal-header">
+            <span class="meal-name">🍎 早点(加餐)</span>
+            <span class="meal-time">10:00</span>
+          </div>
+          <div class="meal-inputs">
+            <div class="meal-input-group">
+              <label>食物品种</label>
+              <input type="text" id="morningSnack" placeholder="如：水果+酸奶">
+            </div>
+            <div class="meal-input-group">
+              <label>接受度</label>
+              <select id="morningSnackState">
+                <option value="">选择</option>
+                <option value="喜欢吃">喜欢吃</option>
+                <option value="一般">一般</option>
+                <option value="不太吃">不太吃</option>
+              </select>
+            </div>
+          </div>
+          <label class="meal-done" id="morningSnackDone">
+            <span class="mini-check"></span><span>已完成打卡</span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="meal-section">
+          <div class="meal-header">
+            <span class="meal-name">🍚 午餐</span>
+            <span class="meal-time">11:30-12:30</span>
+          </div>
+          <div class="meal-inputs">
+            <div class="meal-input-group">
+              <label>主食品种</label>
+              <input type="text" id="lunchMain" placeholder="如：米饭+鱼+蔬菜">
+            </div>
+            <div class="meal-input-group">
+              <label>挑食情况</label>
+              <select id="lunchState">
+                <option value="">选择</option>
+                <option value="全部吃完">全部吃完</option>
+                <option value="吃了一半">吃了一半</option>
+                <option value="挑食少吃">挑食少吃</option>
+                <option value="拒绝不吃">拒绝不吃</option>
+              </select>
+            </div>
+          </div>
+          <label class="meal-done" id="lunchDone">
+            <span class="mini-check"></span><span>已完成打卡</span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="meal-section">
+          <div class="meal-header">
+            <span class="meal-name">🍌 午点(加餐)</span>
+            <span class="meal-time">15:00</span>
+          </div>
+          <div class="meal-inputs">
+            <div class="meal-input-group">
+              <label>食物品种</label>
+              <input type="text" id="afternoonSnack" placeholder="如：香蕉+饼干">
+            </div>
+            <div class="meal-input-group">
+              <label>接受度</label>
+              <select id="afternoonSnackState">
+                <option value="">选择</option>
+                <option value="喜欢吃">喜欢吃</option>
+                <option value="一般">一般</option>
+                <option value="不太吃">不太吃</option>
+              </select>
+            </div>
+          </div>
+          <label class="meal-done" id="afternoonSnackDone">
+            <span class="mini-check"></span><span>已完成打卡</span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="meal-section">
+          <div class="meal-header">
+            <span class="meal-name">🥣 晚餐</span>
+            <span class="meal-time">17:30-18:30</span>
+          </div>
+          <div class="meal-inputs">
+            <div class="meal-input-group">
+              <label>主食品种</label>
+              <input type="text" id="dinnerMain" placeholder="如：面条+肉末+蔬菜">
+            </div>
+            <div class="meal-input-group">
+              <label>进食状态</label>
+              <select id="dinnerState">
+                <option value="">选择</option>
+                <option value="全部吃完">全部吃完</option>
+                <option value="吃了一半">吃了一半</option>
+                <option value="挑食少吃">挑食少吃</option>
+                <option value="拒绝不吃">拒绝不吃</option>
+              </select>
+            </div>
+          </div>
+          <label class="meal-done" id="dinnerDone">
+            <span class="mini-check"></span><span>已完成打卡</span>
+          </label>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="meal-section">
+          <div class="meal-header">
+            <span class="meal-name">💧 饮水量</span>
+            <span class="meal-time">全天</span>
+          </div>
+          <div class="meal-inputs">
+            <div class="meal-input-group">
+              <label>饮水量(ml)</label>
+              <input type="number" id="waterIntake" placeholder="如：500" min="0" max="1000" step="50">
+            </div>
+            <div class="meal-input-group">
+              <label>奶量(ml)</label>
+              <input type="number" id="milkIntake" placeholder="如：300" min="0" max="800" step="50">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 喂养小贴士 -->
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">💡</span>2岁宝宝喂养贴士
+        </div>
+        <div class="tips-list" id="feedingTipsList"></div>
+      </div>
+    </div>
+
+    <!-- ==================== 页面3：早教系统 ==================== -->
+    <div class="page" id="page-edu">
+      <div class="edu-tip-box">
+        <strong>📌 动静交替原则</strong><br>
+        先做感统大运动 → 再做桌面早教（精细/认知/语言），效果最佳。每天只需10~15分钟，不贪多。
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">📚</span>今日早教推荐
+          <span class="badge" id="eduDateBadge"></span>
+        </div>
+        <div id="todayEduGames"></div>
+      </div>
+
+      <div class="section-title">📚 可循环早教游戏库</div>
+      <div id="eduGameLibrary"></div>
+    </div>
+
+    <!-- ==================== 页面4：感统训练 ==================== -->
+    <div class="page" id="page-sensory">
+      <!-- 4周日历视图 -->
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">📅</span>4周感统计划日历
+          <span class="badge" id="sensoryWeekBadge">第1周</span>
+        </div>
+        <div class="calendar-wrap">
+          <div class="calendar-week" id="calendarWeek"></div>
+        </div>
+        <div style="font-size:0.7rem;color:var(--c-text-sub);margin-top:8px;line-height:1.6;">
+          <span style="color:var(--c-accent-dark);">■</span> 室内训练 &nbsp;&nbsp;
+          <span style="color:var(--c-green);">■</span> 户外感统 &nbsp;&nbsp;
+          <span style="color:var(--c-accent);border:1.5px solid var(--c-accent);padding:0 3px;border-radius:3px;">■</span> 今日
+        </div>
+      </div>
+
+      <!-- 今日训练内容 -->
+      <div id="todaySensoryContent"></div>
+    </div>
+
+    <!-- ==================== 页面5：每周复盘 ==================== -->
+    <div class="page" id="page-review">
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">📋</span>每周专业复盘
+          <span class="badge" id="reviewWeekBadge">第1周</span>
+        </div>
+
+        <div class="section-title">📊 四项核心复盘</div>
+
+        <div class="review-item">
+          <div class="review-header">
+            <span class="review-icon">🌀</span>
+            <span class="review-title">前庭觉进步</span>
+          </div>
+          <div class="review-scale" data-key="reviewVestibular">
+            <span class="scale-dot" data-val="1">1</span>
+            <span class="scale-dot" data-val="2">2</span>
+            <span class="scale-dot" data-val="3">3</span>
+            <span class="scale-dot" data-val="4">4</span>
+            <span class="scale-dot" data-val="5">5</span>
+          </div>
+          <textarea class="review-note" id="reviewVestibularNote" placeholder="记录进步/表现，如：接受摇晃的幅度从极小提升到中等…"></textarea>
+        </div>
+
+        <div class="review-item">
+          <div class="review-header">
+            <span class="review-icon">💪</span>
+            <span class="review-title">本体觉力量</span>
+          </div>
+          <div class="review-scale" data-key="reviewProprio">
+            <span class="scale-dot" data-val="1">1</span>
+            <span class="scale-dot" data-val="2">2</span>
+            <span class="scale-dot" data-val="3">3</span>
+            <span class="scale-dot" data-val="4">4</span>
+            <span class="scale-dot" data-val="5">5</span>
+          </div>
+          <textarea class="review-note" id="reviewProprioNote" placeholder="记录力量/协调进步，如：单脚站从2秒提升到3秒…"></textarea>
+        </div>
+
+        <div class="review-item">
+          <div class="review-header">
+            <span class="review-icon">✋</span>
+            <span class="review-title">触觉改善</span>
+          </div>
+          <div class="review-scale" data-key="reviewTactile">
+            <span class="scale-dot" data-val="1">1</span>
+            <span class="scale-dot" data-val="2">2</span>
+            <span class="scale-dot" data-val="3">3</span>
+            <span class="scale-dot" data-val="4">4</span>
+            <span class="scale-dot" data-val="5">5</span>
+          </div>
+          <textarea class="review-note" id="reviewTactileNote" placeholder="记录触觉接受度变化，如：不再抗拒洗头/接受了更多材质…"></textarea>
+        </div>
+
+        <div class="review-item">
+          <div class="review-header">
+            <span class="review-icon">🎯</span>
+            <span class="review-title">专注力提升</span>
+          </div>
+          <div class="review-scale" data-key="reviewFocus">
+            <span class="scale-dot" data-val="1">1</span>
+            <span class="scale-dot" data-val="2">2</span>
+            <span class="scale-dot" data-val="3">3</span>
+            <span class="scale-dot" data-val="4">4</span>
+            <span class="scale-dot" data-val="5">5</span>
+          </div>
+          <textarea class="review-note" id="reviewFocusNote" placeholder="记录专注力表现，如：桌面游戏从3分钟提升到5分钟…"></textarea>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">📝 本周总结</div>
+        <textarea class="review-note" id="reviewWeeklySummary" placeholder="本周整体表现、值得保持的点、下周需要调整的地方…" style="min-height:80px;"></textarea>
+      </div>
+
+      <!-- 预警信号 -->
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">🚨</span>异常预警提示
+        </div>
+        <div style="font-size:0.75rem;color:var(--c-text-sub);margin-bottom:8px;">如出现以下信号，请重点关注并调整训练方案：</div>
+        <div id="warningList"></div>
+      </div>
+
+      <!-- 本周训练统计 -->
+      <div class="card">
+        <div class="card-title">
+          <span class="emoji">📈</span>本周训练统计
+        </div>
+        <div class="progress-label">
+          <span>训练完成率</span>
+          <span id="reviewCompleteRate">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="reviewProgressBar" style="width:0%"></div>
+        </div>
+        <div class="data-grid" style="margin-top:12px;">
+          <div class="data-cell">
+            <div class="data-icon">✅</div>
+            <div class="data-label">完成项数</div>
+            <div class="data-value" id="reviewCompletedCount">0</div>
+          </div>
+          <div class="data-cell">
+            <div class="data-icon">😟</div>
+            <div class="data-label">抗拒次数</div>
+            <div class="data-value" id="reviewResistedCount">0</div>
+          </div>
+          <div class="data-cell">
+            <div class="data-icon">😢</div>
+            <div class="data-label">情绪不佳</div>
+            <div class="data-value" id="reviewBadMoodCount">0</div>
+          </div>
+          <div class="data-cell">
+            <div class="data-icon">🌳</div>
+            <div class="data-label">户外完成</div>
+            <div class="data-value" id="reviewOutdoorCount">0/2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<div class="save-toast" id="saveToast">已保存 ✓</div>
+
+<!-- PWA Service Worker 注册 -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.warn('SW registration failed:', err));
+    });
+  }
+</script>
+
+<script src="js/sensory-data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
