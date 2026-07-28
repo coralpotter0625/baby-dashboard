@@ -775,30 +775,107 @@ function init() {
 let deferredPrompt = null;
 
 function setupInstallPrompt() {
-  // Chrome/Edge 弹窗安装
+  // 检测是否已安装（standalone 模式）
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+    || window.navigator.standalone === true;
+
+  if (isStandalone) {
+    // 已安装，不显示任何安装引导
+    return;
+  }
+
+  // Chrome/Edge/三星 弹窗安装
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
     showInstallBanner();
+    showInstallEntry();
   });
 
   // 已安装
   window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     hideInstallBanner();
+    hideInstallEntry();
     showToast('已安装到桌面 ✓');
   });
 
   // iOS 检测：显示手动添加指引
   if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-    if (!('standalone' in navigator) || !navigator.standalone) {
-      setTimeout(showIosInstallTip, 1500);
-    }
+    setTimeout(() => showIosInstallTip(), 1500);
+    showInstallEntry();
+    return;
   }
+
+  // 华为/鸿蒙检测：华为浏览器通常不触发 beforeinstallprompt
+  const ua = navigator.userAgent.toLowerCase();
+  const isHuawei = /huawei|hon|honor|harmony/.test(ua) 
+    || (window.harmony !== undefined)
+    || /huawei/.test(navigator.vendor?.toLowerCase() || '');
+  
+  // 如果 3 秒后还没触发 beforeinstallprompt，说明浏览器不支持自动弹窗
+  setTimeout(() => {
+    if (!deferredPrompt) {
+      showInstallEntry();
+      // 华为浏览器特殊引导
+      if (isHuawei) {
+        showHuaweiInstallGuide();
+      }
+    }
+  }, 3000);
 }
 
+// 固定的「添加到桌面」入口按钮（仪表盘页面）
+function showInstallEntry() {
+  if (document.getElementById('installEntry')) return;
+  if (localStorage.getItem('install_entry_hidden') === '1') return;
+
+  const entry = document.createElement('div');
+  entry.id = 'installEntry';
+  entry.className = 'install-entry';
+  entry.innerHTML = `
+    <div class="install-entry-icon">📲</div>
+    <div class="install-entry-text">
+      <strong>添加到桌面</strong>
+      <span>像 App 一样使用，离线也能打卡</span>
+    </div>
+    <button class="install-entry-btn" id="installEntryBtn">安装</button>
+  `;
+  
+  // 插入到仪表盘的安全横幅后面
+  const dashboard = document.getElementById('page-dashboard');
+  const safety = dashboard.querySelector('.safety-banner');
+  if (safety && safety.nextSibling) {
+    dashboard.insertBefore(entry, safety.nextSibling);
+  } else {
+    dashboard.insertBefore(entry, dashboard.firstChild);
+  }
+
+  document.getElementById('installEntryBtn').addEventListener('click', () => {
+    if (deferredPrompt) {
+      // 支持 prompt 的浏览器
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(({ outcome }) => {
+        if (outcome === 'accepted') showToast('安装中…');
+        deferredPrompt = null;
+      });
+    } else {
+      // 不支持 prompt 的浏览器，显示手动引导
+      showManualInstallGuide();
+    }
+  });
+}
+
+function hideInstallEntry() {
+  const entry = document.getElementById('installEntry');
+  if (entry) entry.remove();
+}
+
+// 底部自动弹出的横幅
 function showInstallBanner() {
   if (document.getElementById('installBanner')) return;
+  if (localStorage.getItem('install_banner_closed') === '1') return;
+
   const banner = document.createElement('div');
   banner.id = 'installBanner';
   banner.className = 'install-banner';
@@ -834,8 +911,176 @@ function hideInstallBanner() {
   if (banner) banner.remove();
 }
 
+// 华为/鸿蒙专属安装引导
+function showHuaweiInstallGuide() {
+  if (document.getElementById('huaweiGuide')) return;
+  if (localStorage.getItem('huawei_guide_closed') === '1') return;
+
+  const guide = document.createElement('div');
+  guide.id = 'huaweiGuide';
+  guide.className = 'install-modal-overlay';
+  guide.innerHTML = `
+    <div class="install-modal">
+      <div class="modal-close" id="closeHuaweiGuide">✕</div>
+      <div class="modal-icon">📱</div>
+      <h3>华为手机安装指引</h3>
+      <p class="modal-subtitle">华为浏览器需手动添加到桌面，30秒搞定</p>
+      <div class="modal-steps">
+        <div class="modal-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>点击浏览器底部「⋮」菜单</strong>
+            <span>页面右下角或右上角的三个点图标</span>
+          </div>
+        </div>
+        <div class="modal-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>选择「添加到主屏幕」</strong>
+            <span>或「添加至桌面」「创建快捷方式」</span>
+          </div>
+        </div>
+        <div class="modal-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>确认添加</strong>
+            <span>桌面出现「奶咖育儿」图标，点击即用</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-note">
+        💡 如果菜单里找不到，换用 <strong>Chrome 浏览器</strong> 打开本页面，会自动弹出安装提示
+      </div>
+      <button class="modal-ok-btn" id="huaweiGuideOk">我知道了</button>
+    </div>
+  `;
+  document.body.appendChild(guide);
+
+  const close = () => {
+    guide.remove();
+    localStorage.setItem('huawei_guide_closed', '1');
+  };
+  document.getElementById('closeHuaweiGuide').addEventListener('click', close);
+  document.getElementById('huaweiGuideOk').addEventListener('click', close);
+}
+
+// 通用手动安装引导（非 iOS、非华为，但不支持 prompt 时）
+function showManualInstallGuide() {
+  if (document.getElementById('manualGuide')) return;
+
+  const guide = document.createElement('div');
+  guide.id = 'manualGuide';
+  guide.className = 'install-modal-overlay';
+  
+  // 判断浏览器类型给出对应指引
+  const ua = navigator.userAgent.toLowerCase();
+  let browserName = '你的浏览器';
+  let steps = `
+    <div class="modal-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <strong>点击浏览器「⋮」菜单</strong>
+        <span>页面右上角的三个点图标</span>
+      </div>
+    </div>
+    <div class="modal-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <strong>选择「添加到主屏幕」</strong>
+        <span>或「安装应用」</span>
+      </div>
+    </div>
+    <div class="modal-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <strong>确认添加</strong>
+        <span>桌面出现图标，点击即用</span>
+      </div>
+    </div>
+  `;
+
+  if (/huawei|hon|honor|harmony/.test(ua)) {
+    browserName = '华为浏览器';
+  } else if (/miui|redmi/.test(ua)) {
+    browserName = '小米浏览器';
+  } else if (/qq/.test(ua)) {
+    browserName = 'QQ浏览器';
+    steps = `
+      <div class="modal-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>点击底部「⋮」菜单</strong>
+          <span>页面下方的菜单按钮</span>
+        </div>
+      </div>
+      <div class="modal-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>选择「添加书签」→「添加到主屏幕」</strong>
+          <span>或「工具箱」→「添加到桌面」</span>
+        </div>
+      </div>
+      <div class="modal-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>用系统浏览器打开更佳</strong>
+          <span>建议复制链接到 Chrome 打开，可一键安装</span>
+        </div>
+      </div>
+    `;
+  } else if (/micromessenger/.test(ua)) {
+    browserName = '微信内置浏览器';
+    steps = `
+      <div class="modal-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>点击右上角「⋯」</strong>
+          <span>微信页面右上角的三个点</span>
+        </div>
+      </div>
+      <div class="modal-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>选择「在浏览器打开」</strong>
+          <span>用系统浏览器或 Chrome 打开</span>
+        </div>
+      </div>
+      <div class="modal-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>在浏览器中添加到主屏幕</strong>
+          <span>浏览器菜单 → 添加到主屏幕</span>
+        </div>
+      </div>
+    `;
+  }
+
+  guide.innerHTML = `
+    <div class="install-modal">
+      <div class="modal-close" id="closeManualGuide">✕</div>
+      <div class="modal-icon">📲</div>
+      <h3>添加到桌面</h3>
+      <p class="modal-subtitle">${browserName} 手动安装指引</p>
+      <div class="modal-steps">
+        ${steps}
+      </div>
+      <div class="modal-note">
+        💡 推荐用 <strong>Chrome 浏览器</strong> 打开本页面，可自动弹出一键安装提示
+      </div>
+      <button class="modal-ok-btn" id="manualGuideOk">我知道了</button>
+    </div>
+  `;
+  document.body.appendChild(guide);
+
+  const close = () => guide.remove();
+  document.getElementById('closeManualGuide').addEventListener('click', close);
+  document.getElementById('manualGuideOk').addEventListener('click', close);
+}
+
 function showIosInstallTip() {
   if (document.getElementById('iosInstallTip')) return;
+  if (localStorage.getItem('ios_tip_closed') === '1') return;
+
   const tip = document.createElement('div');
   tip.id = 'iosInstallTip';
   tip.className = 'install-banner ios';

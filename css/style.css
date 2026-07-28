@@ -847,6 +847,194 @@ body {
   padding: 4px;
 }
 
+/* ==================== 固定安装入口 ==================== */
+.install-entry {
+  background: linear-gradient(135deg, var(--c-accent-light) 0%, #F5EEE5 100%);
+  border: 1px solid var(--c-accent-light);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.install-entry-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.install-entry-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.install-entry-text strong {
+  font-size: 0.85rem;
+  color: var(--c-text);
+}
+
+.install-entry-text span {
+  font-size: 0.7rem;
+  color: var(--c-text-sub);
+}
+
+.install-entry-btn {
+  background: var(--c-accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.install-entry-btn:active {
+  transform: scale(0.95);
+}
+
+/* ==================== 安装引导弹窗 ==================== */
+.install-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(45, 42, 38, 0.4);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.install-modal {
+  background: var(--c-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px 22px;
+  max-width: 380px;
+  width: 100%;
+  position: relative;
+  animation: slideUpModal 0.35s ease;
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  color: var(--c-text-light);
+  font-size: 1.1rem;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-icon {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.install-modal h3 {
+  text-align: center;
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.modal-subtitle {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--c-text-sub);
+  margin-bottom: 18px;
+}
+
+.modal-steps {
+  margin-bottom: 16px;
+}
+
+.modal-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.modal-step .step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-step .step-content {
+  flex: 1;
+  padding-top: 2px;
+}
+
+.modal-step .step-content strong {
+  font-size: 0.85rem;
+  color: var(--c-text);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.modal-step .step-content span {
+  font-size: 0.72rem;
+  color: var(--c-text-sub);
+}
+
+.modal-note {
+  background: var(--c-accent-light);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.74rem;
+  color: var(--c-accent-dark);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.modal-note strong {
+  font-weight: 700;
+}
+
+.modal-ok-btn {
+  width: 100%;
+  background: var(--c-accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-ok-btn:active {
+  transform: scale(0.97);
+}
+
 /* ==================== 早教 ==================== */
 .edu-game-card {
   background: var(--c-card);
